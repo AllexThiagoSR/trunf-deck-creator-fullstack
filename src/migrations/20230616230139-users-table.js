@@ -26,6 +26,16 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: true,
         },
+        role: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          referenses: {
+            key: 'id',
+            model: 'roles',
+          },
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE'
+        }
       },
     );
   },

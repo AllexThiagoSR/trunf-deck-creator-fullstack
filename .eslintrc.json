@@ -1,6 +1,7 @@
 {
   "root": true,
   "extends": ["trybe-backend"],
+  "ignorePatterns": ["**/migrations/", "**/seeders/", "**/models/"],
   "rules": {
     "sonarjs/no-duplicate-string": ["error", 5]
   }

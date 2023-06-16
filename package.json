@@ -6,7 +6,7 @@
     "joi": "17.6.0",
     "jsonwebtoken": "9.0.0",
     "morgan": "1.10.0",
-    "mysql": "2.1.0",
+    "mysql2": "2.1.0",
     "sequelize": "6.3.4"
   },
   "devDependencies": {

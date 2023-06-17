@@ -22,17 +22,20 @@ const login = async (password, username = '', email = '') => {
   }
 };
 
-const create = async (username, email, password, image) => {
+const create = async ({ username, email, password, image }) => {
   try {
     const result = await sequelize.transaction(async (transaction) => {
       const user = await User.create(
         { username, email, password, image, roleId: 2 },
-        { transaction, attributes: { exclude: ['password'] } },
+        { transaction },
       );
       return { status: 201, data: user };
     });
     return result;
   } catch (error) {
+    if (error.original.code === 'ER_DUP_ENTRY') {
+      return { status: 409, data: { message: 'This email is already registered' } };
+    }
     return { status: 500, data: { message: 'Something went wrong' } };
   }
 };

@@ -22,14 +22,22 @@ const login = async (password, username = '', email = '') => {
   }
 };
 
+const createUser = async (user, transaction) => {
+  const { username, email, image, id } = await User.create(
+    { ...user, roleId: 2 },
+    { transaction },
+  );
+  return { id, email, image, username };
+};
+
 const create = async ({ username, email, password, image }) => {
   try {
     const result = await sequelize.transaction(async (transaction) => {
-      const user = await User.create(
-        { username, email, password, image, roleId: 2 },
-        { transaction },
-      );
-      return { status: 201, data: user };
+      const user = await createUser({ username, email, password, image }, transaction);
+      return { 
+        status: 201,
+        data: user,
+      }; 
     });
     return result;
   } catch (error) {

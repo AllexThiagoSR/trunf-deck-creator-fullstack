@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.associate = ({ Role }) => {
+  User.associate = ({ Role, Deck }) => {
     User.hasOne(
       Role,
       {
@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'role'
       }
     );
+    User.hasMany(Deck, { foreignKey: 'userId', as: 'decks' });
   };
 
   return User;

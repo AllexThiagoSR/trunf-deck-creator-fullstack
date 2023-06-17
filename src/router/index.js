@@ -1,3 +1,4 @@
 const userRouter = require('./user.routes');
+const deckRouter = require('./deck.routes');
 
-module.exports = { userRouter };
+module.exports = { userRouter, deckRouter };

@@ -14,7 +14,7 @@ const login = async (password, email = '') => {
     if (!user || !isRightPassword(password, user.password)) {
       return { status: 404, data: { message: 'Username, email or password incorrect' } };
     }
-    const token = createToken({ id: user.id, username: user.username });
+    const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };
   } catch (error) {
     return { status: 500, data: { message: 'Something went wrong' } };

@@ -1,5 +1,9 @@
 'use strict';
 
+const { encryptPassword } = require("../utils/bcryptUtils");
+
+const { ADM_PASSWORD } = process.env;
+
 module.exports = {
   up: async (queryInterface) => {
     await queryInterface.bulkInsert(
@@ -8,7 +12,7 @@ module.exports = {
         {
           username: 'Allek',
           email: 'allek123@gmail.com',
-          password: '123456',
+          password: encryptPassword(ADM_PASSWORD),
           role_id: 1
         }
       ],

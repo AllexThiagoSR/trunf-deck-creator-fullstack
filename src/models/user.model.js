@@ -11,13 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       image: DataTypes.STRING,
-      role: {
+      roleId: {
         foreignKey: true,
         type: DataTypes.INTEGER,
       },
     },
     {
-      uderscored: true,
+      underscored: true,
       timestamps: false,
       tableName: 'users',
     }
@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(
       Role,
       {
-        foreignKey: 'role',
+        foreignKey: 'roleId',
         as: 'role'
       }
     );

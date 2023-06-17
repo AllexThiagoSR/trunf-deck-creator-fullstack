@@ -16,4 +16,9 @@ const getUserById = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { login, create, getUserById };
+const getAll = async (req, res) => {
+  const { status, data } = await userService.getAll(req.query.username);
+  return res.status(status).json(data);
+};
+
+module.exports = { login, create, getUserById, getAll };

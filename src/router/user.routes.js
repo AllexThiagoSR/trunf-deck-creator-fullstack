@@ -7,6 +7,8 @@ const router = Router();
 
 router.post('/', validateNewUser, userController.create);
 
+router.get('/', validateToken, userController.getAll);
+
 router.get('/:id', validateToken, userController.getUserById);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const { encryptPassword, isRightPassword } = require('../utils/bcryptUtils');
 
 const env = process.env.NODE_ENV;
 const sequelize = new Sequelize(config[env]);
+const INTERNAL_SERVER_ERROR = { status: 500, data: { message: 'Something went wrong' } };
 
 const login = async (password, email = '') => {
   try {
@@ -16,16 +17,20 @@ const login = async (password, email = '') => {
     const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };
   } catch (error) {
-    return { status: 500, data: { message: 'Something went wrong' } };
+    return INTERNAL_SERVER_ERROR;
   }
 };
 
 const createUser = async (user, transaction) => {
-  const { username, email, image, id, role } = await User.create(
-    { ...user, roleId: 2 },
-    { transaction },
-  );
-  return { id, email, image, username, role };
+  try {
+    const { username, email, image, id, role } = await User.create(
+      { ...user, roleId: 2 },
+      { transaction },
+    );
+    return { id, email, image, username, role };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
 };
 
 const create = async ({ username, email, password, image }) => {
@@ -42,20 +47,43 @@ const create = async ({ username, email, password, image }) => {
     if (error.original.code === 'ER_DUP_ENTRY') {
       return { status: 409, data: { message: 'This email is already registered' } };
     }
-    return { status: 500, data: { message: 'Something went wrong' } };
+    return INTERNAL_SERVER_ERROR;
   }
 };
 
 const getUserById = async (id) => {
-  const user = await User.findOne({ 
-    where: { id },
-    include: [
-      { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
-      { model: Role, as: 'role', attributes: { exclude: ['id'] } },
-    ],
-    attributes: { exclude: ['password', 'roleId'] },
-  });
-  return { status: 200, data: user };
+  try {
+    const user = await User.findOne({ 
+      where: { id },
+      include: [
+        { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
+        { model: Role, as: 'role', attributes: { exclude: ['id'] } },
+      ],
+      attributes: { exclude: ['password', 'roleId'] },
+    });
+    if (!user) return { status: 404, data: { message: 'User not found' } };
+    return { status: 200, data: user };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
 };
 
-module.exports = { login, create, getUserById };
+const getAll = async (username = '') => {
+  try {
+    const users = await User.findAll({
+      where: {
+        username: { [Sequelize.Op.substring]: username },
+      },
+      include: [
+        { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
+        { model: Role, as: 'role', attributes: { exclude: ['id'] } },
+      ],
+      attributes: { exclude: ['password', 'roleId'] },
+    });
+    return { status: 200, data: users };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+}; 
+
+module.exports = { login, create, getUserById, getAll };

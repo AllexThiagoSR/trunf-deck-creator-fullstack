@@ -73,6 +73,7 @@ const getAll = async (username = '') => {
     const users = await User.findAll({
       where: {
         username: { [Sequelize.Op.substring]: username },
+        // roleId: { [Sequelize.Op.ne]: 1 },
       },
       include: [
         { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },

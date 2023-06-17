@@ -1,11 +1,10 @@
 const Sequelize = require('sequelize');
-const { User } = require('../models');
+const { User, Deck, Role } = require('../models');
 const config = require('../config/config');
 const { createToken } = require('../utils/token');
 const { encryptPassword, isRightPassword } = require('../utils/bcryptUtils');
 
 const env = process.env.NODE_ENV;
-
 const sequelize = new Sequelize(config[env]);
 
 const login = async (password, email = '') => {
@@ -47,4 +46,16 @@ const create = async ({ username, email, password, image }) => {
   }
 };
 
-module.exports = { login, create };
+const getUserById = async (id) => {
+  const user = await User.findOne({ 
+    where: { id },
+    include: [
+      { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
+      { model: Role, as: 'role', attributes: { exclude: ['id'] } },
+    ],
+    attributes: { exclude: ['password', 'roleId'] },
+  });
+  return { status: 200, data: user };
+};
+
+module.exports = { login, create, getUserById };

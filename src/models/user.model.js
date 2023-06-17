@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = ({ Role, Deck }) => {
-    User.hasOne(
+    User.belongsTo(
       Role,
       {
         foreignKey: 'roleId',

@@ -2,17 +2,16 @@ const Sequelize = require('sequelize');
 const { User } = require('../models');
 const config = require('../config/config');
 const { createToken } = require('../utils/token');
-
-const { Op } = Sequelize;
+const { encryptPassword, isRightPassword } = require('../utils/bcryptUtils');
 
 const env = process.env.NODE_ENV;
 
 const sequelize = new Sequelize(config[env]);
 
-const login = async (password, username = '', email = '') => {
+const login = async (password, email = '') => {
   try {
-    const user = await User.findOne({ where: { [Op.or]: [{ username }, { email }] } });
-    if (!user || user.password !== password) {
+    const user = await User.findOne({ where: { email } });
+    if (!user || !isRightPassword(password, user.password)) {
       return { status: 404, data: { message: 'Username, email or password incorrect' } };
     }
     const token = createToken({ id: user.id, username: user.username });
@@ -23,21 +22,21 @@ const login = async (password, username = '', email = '') => {
 };
 
 const createUser = async (user, transaction) => {
-  const { username, email, image, id } = await User.create(
+  const { username, email, image, id, role } = await User.create(
     { ...user, roleId: 2 },
     { transaction },
   );
-  return { id, email, image, username };
+  return { id, email, image, username, role };
 };
 
 const create = async ({ username, email, password, image }) => {
   try {
     const result = await sequelize.transaction(async (transaction) => {
-      const user = await createUser({ username, email, password, image }, transaction);
-      return { 
-        status: 201,
-        data: user,
-      }; 
+      const user = await createUser(
+        { username, email, password: encryptPassword(password), image },
+        transaction,
+      );
+      return { status: 201, data: user }; 
     });
     return result;
   } catch (error) {

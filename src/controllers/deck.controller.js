@@ -6,4 +6,9 @@ const create = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { create };
+const getAll = async (_req, res) => {
+  const { status, data } = await deckeService.getAll();
+  return res.status(status).json(data); 
+};
+
+module.exports = { create, getAll };

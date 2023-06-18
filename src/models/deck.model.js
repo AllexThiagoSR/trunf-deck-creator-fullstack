@@ -21,8 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
 
-  Deck.associate = ({ User }) => {
+  Deck.associate = ({ User, Card }) => {
     Deck.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+    Deck.hasMany(Card, { foreignKey: 'deckId', as: 'cards' });
   };
 
   return Deck;

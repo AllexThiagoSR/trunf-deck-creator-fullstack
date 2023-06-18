@@ -6,4 +6,6 @@ const router = Router();
 
 router.post('/', validateToken, deckController.create);
 
+router.get('/', validateToken, deckController.getAll);
+
 module.exports = router;

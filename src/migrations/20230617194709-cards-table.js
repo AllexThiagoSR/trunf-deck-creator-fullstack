@@ -45,6 +45,15 @@ module.exports = {
           allowNull: false,
           field: 'attribute_three'
         },
+        deckId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          field: 'deck_id',
+          references: {
+            model: 'decks',
+            key: 'id'
+          },
+        },
       },
     );
   },

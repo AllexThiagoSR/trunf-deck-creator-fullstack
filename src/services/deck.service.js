@@ -1,4 +1,4 @@
-const { Deck } = require('../models');
+const { Deck, User, Card } = require('../models');
 
 const create = async (deckInfo) => {
   const { 
@@ -18,4 +18,17 @@ const create = async (deckInfo) => {
   return { status: 201, data: deck };
 };
 
-module.exports = { create };
+const getAll = async () => {
+  const decks = await Deck.findAll({
+    include: [
+      { model: User, as: 'user', attributes: { exclude: ['id', 'roleId'] } },
+      { model: Card, as: 'cards' },
+    ],
+    attributes: {
+      exclude: ['userId'],
+    },
+  });
+  return { status: 200, data: decks };
+};
+
+module.exports = { create, getAll };

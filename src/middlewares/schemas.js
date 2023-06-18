@@ -7,4 +7,13 @@ const createUserSchema = Joi.object({
   image: Joi.string(),
 });
 
-module.exports = { createUserSchema };
+const createDeckSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  attributeOne: Joi.string().min(3),
+  attributeTwo: Joi.string().min(3),
+  attributeThree: Joi.string().min(3),
+});
+
+const createCardSchema = Joi.object({});
+
+module.exports = { createUserSchema, createCardSchema, createDeckSchema };

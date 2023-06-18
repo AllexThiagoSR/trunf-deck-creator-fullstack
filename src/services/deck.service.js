@@ -1,34 +1,32 @@
 const { Deck, User, Card } = require('../models');
 
+const INTERNAL_SERVER_ERROR = { status: 500, data: { message: 'Internal server error' } };
+
 const create = async (deckInfo) => {
-  const { 
-    name,
-    attributeOne,
-    attributeTwo,
-    attributeThree,
-    userId,
-  } = deckInfo;
-  const deck = await Deck.create({
-    name,
-    attributeOne,
-    attributeTwo,
-    attributeThree,
-    userId,
-  });
-  return { status: 201, data: deck };
+  try {
+    const { id } = await Deck.create(deckInfo);
+    const deck = await Deck.findByPk(id);
+    return { status: 201, data: deck };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
 };
 
 const getAll = async () => {
-  const decks = await Deck.findAll({
-    include: [
-      { model: User, as: 'user', attributes: { exclude: ['id', 'roleId'] } },
-      { model: Card, as: 'cards' },
-    ],
-    attributes: {
-      exclude: ['userId'],
-    },
-  });
-  return { status: 200, data: decks };
+  try {
+    const decks = await Deck.findAll({
+      include: [
+        { model: User, as: 'user', attributes: { exclude: ['id', 'roleId'] } },
+        { model: Card, as: 'cards' },
+      ],
+      attributes: {
+        exclude: ['userId'],
+      },
+    });
+    return { status: 200, data: decks };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
 };
 
 module.exports = { create, getAll };

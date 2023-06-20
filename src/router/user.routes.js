@@ -9,6 +9,8 @@ router.post('/', validateNewUser, userController.create);
 
 router.get('/', validateToken, userController.getAll);
 
+router.patch('/change/password', validateToken, userController.changePassword);
+
 router.get('/:id', validateToken, userController.getUserById);
 
 module.exports = router;

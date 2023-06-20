@@ -21,4 +21,10 @@ const getAll = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { login, create, getUserById, getAll };
+const changePassword = async (req, res) => {
+  const { password, newPassword } = req.body;
+  const { status, data } = await userService.changePassword(password, newPassword, req.user);
+  return res.status(status).json(data);
+};
+
+module.exports = { login, create, getUserById, getAll, changePassword };

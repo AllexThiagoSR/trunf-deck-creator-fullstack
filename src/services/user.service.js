@@ -22,15 +22,11 @@ const login = async (password, email = '') => {
 };
 
 const createUser = async (user, transaction) => {
-  try {
-    const { username, email, image, id, role } = await User.create(
-      { ...user, roleId: 2 },
-      { transaction },
-    );
-    return { id, email, image, username, role };
-  } catch (error) {
-    return INTERNAL_SERVER_ERROR;
-  }
+  const { username, email, image, id, role } = await User.create(
+    { ...user, roleId: 2 },
+    { transaction },
+  );
+  return { id, email, image, username, role };
 };
 
 const create = async ({ username, email, password, image }) => {
@@ -73,7 +69,6 @@ const getAll = async (username = '') => {
     const users = await User.findAll({
       where: {
         username: { [Sequelize.Op.substring]: username },
-        // roleId: { [Sequelize.Op.ne]: 1 },
       },
       include: [
         { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
@@ -85,6 +80,19 @@ const getAll = async (username = '') => {
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
   }
-}; 
+};
 
-module.exports = { login, create, getUserById, getAll };
+const changePassword = async (previousPassword, password, loggedUser) => {
+  try {
+    const user = await User.findByPk(loggedUser.id);
+    if (!isRightPassword(previousPassword, user.password)) {
+      return { status: 401, data: { message: 'Unauthorized' } };
+    }
+    User.update({ password: encryptPassword(password) }, { where: { id: loggedUser.id } });
+    return { status: 200, data: { message: 'Password updated' } };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+};
+
+module.exports = { login, create, getUserById, getAll, changePassword };

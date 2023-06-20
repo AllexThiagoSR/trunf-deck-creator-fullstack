@@ -95,4 +95,15 @@ const changePassword = async (previousPassword, password, loggedUser) => {
   }
 };
 
-module.exports = { login, create, getUserById, getAll, changePassword };
+const updateUser = async ({ username, image }, loggedUser) => {
+  try {
+    await User.update({ username, image }, { where: { id: loggedUser.id } });
+    const updatedUser = await User
+      .findByPk(loggedUser.id, { attributes: { exclude: ['password'] } });
+    return { status: 200, data: updatedUser };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+};
+
+module.exports = { login, create, getUserById, getAll, changePassword, updateUser };

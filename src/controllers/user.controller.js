@@ -27,4 +27,9 @@ const changePassword = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { login, create, getUserById, getAll, changePassword };
+const updateUser = async (req, res) => {
+  const { status, data } = await userService.updateUser(req.body, req.user);
+  return res.status(status).json(data);
+};
+
+module.exports = { login, create, updateUser, getUserById, getAll, changePassword };

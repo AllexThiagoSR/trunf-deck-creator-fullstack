@@ -11,7 +11,7 @@ module.exports = {
       [
         {
           username: 'Allek',
-          email: 'allek123@gmail.com',
+          email: 'allexthiagoDEV@gmail.com',
           password: encryptPassword(ADM_PASSWORD),
           role_id: 1
         }

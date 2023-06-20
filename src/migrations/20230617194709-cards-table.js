@@ -21,9 +21,14 @@ module.exports = {
           allowNull: false,
           type: Sequelize.STRING,
         },
-        rarity: {
+        rarityId: {
           allowNull: false,
-          type: Sequelize.STRING,
+          type: Sequelize.INTEGER,
+          field: 'rarity_id',
+          references: {
+            key: 'key',
+            model: 'rarities'
+          },
         },
         isTrunfo: {
           allowNull: false,

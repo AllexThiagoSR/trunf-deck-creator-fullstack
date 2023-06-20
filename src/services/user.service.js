@@ -95,9 +95,9 @@ const changePassword = async (previousPassword, password, loggedUser) => {
   }
 };
 
-const updateUser = async ({ username, image }, loggedUser) => {
+const updateUser = async ({ username, image, email }, loggedUser) => {
   try {
-    await User.update({ username, image }, { where: { id: loggedUser.id } });
+    await User.update({ username, image, email }, { where: { id: loggedUser.id } });
     const updatedUser = await User
       .findByPk(loggedUser.id, { attributes: { exclude: ['password'] } });
     return { status: 200, data: updatedUser };

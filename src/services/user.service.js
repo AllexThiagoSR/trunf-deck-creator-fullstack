@@ -12,7 +12,7 @@ const login = async (password, email = '') => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user || !isRightPassword(password, user.password)) {
-      return { status: 404, data: { message: 'Username, email or password incorrect' } };
+      return { status: 401, data: { message: 'Username, email or password incorrect' } };
     }
     const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };
@@ -36,11 +36,13 @@ const create = async ({ username, email, password, image }) => {
         { username, email, password: encryptPassword(password), image },
         transaction,
       );
-      return { status: 201, data: user }; 
+      const userToReturn = { ...user };
+      delete userToReturn.password;
+      return { status: 201, data: userToReturn }; 
     });
     return result;
   } catch (error) {
-    if (error.original.code === 'ER_DUP_ENTRY') {
+    if (error.original && error.original.code === 'ER_DUP_ENTRY') {
       return { status: 409, data: { message: 'This email is already registered' } };
     }
     return INTERNAL_SERVER_ERROR;

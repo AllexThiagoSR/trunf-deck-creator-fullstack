@@ -5,4 +5,5 @@ const getAll = async (req, res) => {
   const { status, data } = await cardService.getAll(rarity, isTrunfo, q);
   return res.status(status).json(data);
 };
+
 module.exports = { getAll };

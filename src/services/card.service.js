@@ -6,14 +6,14 @@ const INTERNAL_ERROR = { status: 500, data: { message: 'Internal server error' }
 const createCard = async (cardInfo) => {
   const {
     name, description, deckId,
-    image, rarity, isTrunfo,
+    image, rarityId, isTrunfo,
     attributes: [one, two, three],
   } = cardInfo;
   const card = await Card.create({
     name,
     description,
     image,
-    rarity,
+    rarityId,
     isTrunfo,
     deckId,
     attributeOne: one,
@@ -34,10 +34,11 @@ const create = async (cardInfo) => {
 
 const getAll = async (rarity, isTrunfo = '', q = '') => {
   const rare = rarity ? [rarity] : [1, 2, 3];
-  const trunfo = typeof isTrunfo !== 'boolean' ? {} : { isTrunfo: { [Op.is]: isTrunfo } };
+  const trunfo = isTrunfo !== 'true' && isTrunfo !== 'false'
+    ? {} : { isTrunfo: { [Op.is]: isTrunfo === 'true' } };
   try {
     const cards = await Card 
-      .findAll({ where: { rarity: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo } });
+      .findAll({ where: { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo } });
     return { status: 200, data: cards };
   } catch (error) {
     return INTERNAL_ERROR;

@@ -16,8 +16,8 @@ const getAll = async () => {
   try {
     const decks = await Deck.findAll({
       include: [
-        { model: User, as: 'user', attributes: { exclude: ['id', 'roleId'] } },
-        { model: Card, as: 'cards' },
+        { model: User, as: 'user', attributes: { exclude: ['id', 'roleId', 'password', 'email'] } },
+        { model: Card, as: 'cards', attributes: { exclude: ['deckId'] } },
       ],
       attributes: {
         exclude: ['userId'],

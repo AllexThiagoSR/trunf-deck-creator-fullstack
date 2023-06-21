@@ -26,7 +26,7 @@ module.exports = {
           type: Sequelize.INTEGER,
           field: 'rarity_id',
           references: {
-            key: 'key',
+            key: 'id',
             model: 'rarities'
           },
         },

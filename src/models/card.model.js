@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       description: DataTypes.STRING,
       image: DataTypes.STRING,
-      rarity: DataTypes.STRING,
+      rarityId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true
+      },
       isTrunfo: DataTypes.BOOLEAN,
       attributeOne: DataTypes.INTEGER,
       attributeTwo: DataTypes.INTEGER,

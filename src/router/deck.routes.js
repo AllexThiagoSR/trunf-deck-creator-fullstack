@@ -9,4 +9,6 @@ router.post('/', validateToken, validateNewDeck, deckController.create);
 
 router.get('/', validateToken, deckController.getAll);
 
+router.get('/:id', deckController.getById);
+
 module.exports = router;

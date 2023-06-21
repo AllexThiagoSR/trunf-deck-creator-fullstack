@@ -30,8 +30,9 @@ module.exports = (sequelize, DataTypes) => {
     },
   );
   
-  Card.associate = ({ Deck }) => {
+  Card.associate = ({ Deck, Rarity }) => {
     Card.belongsTo(Deck, { foreignKey: 'deckId', as: 'deck' });
+    Card.belongsTo(Rarity, { foreignKey: 'rarityId', as: 'rarity' });
   };
 
   return Card;

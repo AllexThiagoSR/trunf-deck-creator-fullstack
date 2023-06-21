@@ -72,10 +72,6 @@ const getAll = async (username = '') => {
       where: {
         username: { [Sequelize.Op.substring]: username },
       },
-      include: [
-        { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
-        { model: Role, as: 'role', attributes: { exclude: ['id'] } },
-      ],
       attributes: { exclude: ['password', 'roleId'] },
     });
     return { status: 200, data: users };
@@ -101,7 +97,7 @@ const updateUser = async ({ username, image, email }, loggedUser) => {
   try {
     await User.update({ username, image, email }, { where: { id: loggedUser.id } });
     const updatedUser = await User
-      .findByPk(loggedUser.id, { attributes: { exclude: ['password'] } });
+      .findByPk(loggedUser.id, { attributes: { exclude: ['password', 'role_id'] } });
     return { status: 200, data: updatedUser };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;

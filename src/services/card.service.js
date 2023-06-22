@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Card } = require('../models');
+const { Card, Deck } = require('../models');
 
 const INTERNAL_ERROR = { status: 500, data: { message: 'Internal server error' } };
 
@@ -45,4 +45,29 @@ const getAll = async (rarity, isTrunfo = '', q = '') => {
   }
 };
 
-module.exports = { create, getAll };
+const update = async (id, loggedUser, { name, description, image, rarityId, deckId }) => {
+  try {
+    const deck = await Deck.findByPk(deckId);
+    const card = await Card.findByPk(id);
+    if (!card) return { status: 404, data: { message: 'Card not found' } };
+    if (deck.userId !== loggedUser.id) {
+      return { status: 401, data: { message: 'This deck do not belong to this user' } };
+    }
+    await Card.update({ name, description, image, rarityId });
+    return { status: 200, data: { message: 'Card updated' } };
+  } catch (error) {
+    return INTERNAL_ERROR;
+  }
+};
+
+const deleteCard = async (id) => {
+  try {
+    const card = await Card.findByPk(id);
+    if (!card) return { status: 404, data: { message: 'Card not found' } };
+    await Card.destroy({ where: { id } });
+  } catch (error) {
+    return INTERNAL_ERROR;
+  }
+};
+
+module.exports = { create, getAll, deleteCard, update };

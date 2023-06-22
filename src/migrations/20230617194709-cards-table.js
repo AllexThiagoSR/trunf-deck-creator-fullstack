@@ -29,6 +29,8 @@ module.exports = {
             key: 'id',
             model: 'rarities'
           },
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
         },
         isTrunfo: {
           allowNull: false,
@@ -58,6 +60,8 @@ module.exports = {
             model: 'decks',
             key: 'id'
           },
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
         },
       },
     );

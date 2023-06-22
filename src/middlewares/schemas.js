@@ -32,7 +32,7 @@ const createCardSchema = Joi.object({
     .required(),
   description: Joi.string().min(7).required(),
   image: Joi.string(),
-  rarityId: Joi.number().min(1).max(5).required(),
+  rarityId: Joi.number().required(),
   isTrunfo: Joi.boolean().required(),
   deckId: Joi.number().required(),
 });

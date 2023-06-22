@@ -20,6 +20,27 @@ const updateUserSchema = Joi.object({
   image: Joi.string(),
 });
 
-const createCardSchema = Joi.object({});
+const updateDeckSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  attributes: Joi.array().items(Joi.string().min(3)).min(3).max(3)
+    .required(),
+});
 
-module.exports = { createUserSchema, updateUserSchema, createCardSchema, createDeckSchema };
+const createCardSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  attributes: Joi.array().items(Joi.string().min(3)).min(3).max(3)
+    .required(),
+  description: Joi.string().min(7).required(),
+  image: Joi.string(),
+  rarityId: Joi.number().min(1).max(5).required(),
+  isTrunfo: Joi.boolean().required(),
+  deckId: Joi.number().required(),
+});
+
+module.exports = { 
+  createUserSchema,
+  updateDeckSchema,
+  updateUserSchema,
+  createCardSchema,
+  createDeckSchema,
+};

@@ -32,14 +32,30 @@ const create = async (cardInfo) => {
   }
 };
 
-const getAll = async (rarity, isTrunfo = '', q = '') => {
+const makePartition = (quantity = 15, page = 1) => ({
+  limit: quantity,
+  offset: (Number(page) - 1) * quantity,
+  nextPage: Number(page) + 1,
+});
+
+const makeFilters = (rarity, isTrunfo, q) => {
   const rare = rarity ? [rarity] : [1, 2, 3];
   const trunfo = isTrunfo !== 'true' && isTrunfo !== 'false'
     ? {} : { isTrunfo: { [Op.is]: isTrunfo === 'true' } };
+  return { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo };
+};
+
+const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
   try {
-    const cards = await Card 
-      .findAll({ where: { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo } });
-    return { status: 200, data: cards };
+    const { limit, offset, nextPage } = makePartition(quantity, page);
+    const { count, rows: cards } = await Card.findAndCountAll({ 
+      where: makeFilters(rarity, isTrunfo, q),
+      order: ['id'],
+      limit,
+      offset,
+    });
+    const next = (offset + limit) < count ? `http://localhost:3001/cards?page=${nextPage}` : null; 
+    return { status: 200, data: { cards, next } };
   } catch (error) {
     return INTERNAL_ERROR;
   }

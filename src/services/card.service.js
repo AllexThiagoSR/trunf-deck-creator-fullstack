@@ -29,6 +29,14 @@ const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
   await Card.findOne({ where: { deckId, isTrunfo: true } }),
 );
 
+const attributesIsOk = ({ attributes }) => {
+  const maxSum = 210;
+  const attributesIsInRange = attributes.every((value) => (value >= 0 && value <= 90));
+  console.log(attributesIsInRange);
+  const sumIsInRange = attributes.reduce((acc, currValue) => acc + currValue, 0) < maxSum;
+  return attributesIsInRange && sumIsInRange;
+};
+
 const create = async (cardInfo) => {
   try {
     if (!(await deckExists(cardInfo.deckId))) {
@@ -36,6 +44,9 @@ const create = async (cardInfo) => {
     }
     if ((await hasTrunfo(cardInfo))) {
       return { status: 409, data: { message: 'This deck already have a trunfo' } };
+    }
+    if (!attributesIsOk(cardInfo)) {
+      return { status: 409, data: { message: 'Attributes rules inflicted' } };
     }
     const card = await createCard(cardInfo);
     return { status: 201, data: card };

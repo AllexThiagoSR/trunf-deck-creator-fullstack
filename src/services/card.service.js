@@ -1,7 +1,30 @@
-const { Op } = require('sequelize');
-const { Card, Deck } = require('../models');
+const { Op, QueryTypes } = require('sequelize');
+const { Card, Deck, sequelize } = require('../models');
 
 const INTERNAL_ERROR = { status: 500, data: { message: 'Internal server error' } };
+
+const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
+
+const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
+  await Card.findOne({ where: { deckId, isTrunfo: true } }),
+);
+
+const attributesIsOk = ({ attributes }) => {
+  const maxSum = 210;
+  const attributesIsInRange = attributes.every((value) => (value >= 0 && value <= 90));
+  console.log(attributesIsInRange);
+  const sumIsInRange = attributes.reduce((acc, currValue) => acc + currValue, 0) < maxSum;
+  return attributesIsInRange && sumIsInRange;
+};
+
+const maxQuantity = async ({ deckId }) => {
+  const [{ quantity }] = await sequelize.query(
+    'SELECT COUNT(*) as quantity FROM cards WHERE deck_id = ?',
+    { type: QueryTypes.SELECT, replacements: [deckId] },
+  );
+  const maxCardsQuantity = 32;
+  return quantity === maxCardsQuantity;
+};
 
 const createCard = async (cardInfo) => {
   const {
@@ -23,18 +46,14 @@ const createCard = async (cardInfo) => {
   return card;
 };
 
-const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
-
-const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
-  await Card.findOne({ where: { deckId, isTrunfo: true } }),
-);
-
-const attributesIsOk = ({ attributes }) => {
-  const maxSum = 210;
-  const attributesIsInRange = attributes.every((value) => (value >= 0 && value <= 90));
-  console.log(attributesIsInRange);
-  const sumIsInRange = attributes.reduce((acc, currValue) => acc + currValue, 0) < maxSum;
-  return attributesIsInRange && sumIsInRange;
+const hasDeckConflict = async (cardInfo) => {
+  if ((await hasTrunfo(cardInfo))) {
+    return { status: 409, data: { message: 'This deck already have a trunfo' } };
+  }
+  if (!attributesIsOk(cardInfo)) {
+    return { status: 409, data: { message: 'Attributes rules inflicted' } };
+  }
+  return false;
 };
 
 const create = async (cardInfo) => {
@@ -42,12 +61,11 @@ const create = async (cardInfo) => {
     if (!(await deckExists(cardInfo.deckId))) {
       return { status: 404, data: { message: 'Deck not found' } };
     }
-    if ((await hasTrunfo(cardInfo))) {
-      return { status: 409, data: { message: 'This deck already have a trunfo' } };
+    if (await maxQuantity(cardInfo)) {
+      return { status: 409, data: { message: 'Max cards quantity reached' } };
     }
-    if (!attributesIsOk(cardInfo)) {
-      return { status: 409, data: { message: 'Attributes rules inflicted' } };
-    }
+    const hasConflict = await hasDeckConflict(cardInfo);
+    if (hasConflict) return hasConflict; 
     const card = await createCard(cardInfo);
     return { status: 201, data: card };
   } catch (error) {

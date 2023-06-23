@@ -23,8 +23,13 @@ const createCard = async (cardInfo) => {
   return card;
 };
 
+const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
+
 const create = async (cardInfo) => {
   try {
+    if (await deckExists(cardInfo.deckId)) {
+      return { status: 404, data: { message: 'Deck not found' } };
+    }
     const card = await createCard(cardInfo);
     return { status: 201, data: card };
   } catch (error) {
@@ -61,15 +66,20 @@ const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
   }
 };
 
-const update = async (id, loggedUser, { name, description, image, rarityId, deckId }) => {
+const update = async (id, user, { name, description, image, rarityId, attributes, deckId }) => {
   try {
+    const [attributeOne, attributeTwo, attributeThree] = attributes;
     const deck = await Deck.findByPk(deckId);
-    const card = await Card.findByPk(id);
-    if (!card) return { status: 404, data: { message: 'Card not found' } };
-    if (deck.userId !== loggedUser.id) {
+    if (!deck) return { status: 404, data: { message: 'Deck not found' } };
+    if (deck.userId !== user.id) {
       return { status: 401, data: { message: 'This deck do not belong to this user' } };
     }
-    await Card.update({ name, description, image, rarityId });
+    const card = await Card.findByPk(id);
+    if (!card) return { status: 404, data: { message: 'Card not found' } };
+    await Card.update(
+      { name, description, image, rarityId, attributeOne, attributeTwo, attributeThree },
+      { where: { id } },
+    );
     return { status: 200, data: { message: 'Card updated' } };
   } catch (error) {
     return INTERNAL_ERROR;

@@ -6,4 +6,14 @@ const getAll = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { getAll };
+const update = async (req, res) => {
+  const { id } = req.params;
+  const { status, data } = await cardService.update(
+    id,
+    req.user,
+    req.body,
+  );
+  return res.status(status).json(data);
+};
+
+module.exports = { getAll, update };

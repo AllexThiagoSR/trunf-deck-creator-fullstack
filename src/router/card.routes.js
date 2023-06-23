@@ -2,12 +2,13 @@ const { Router } = require('express');
 const { cardController } = require('../controllers');
 const validateToken = require('../middlewares/validateToken');
 const validateCardUpdate = require('../middlewares/validateCardUpdate');
+const validateCardCreate = require('../middlewares/validateCardCreate');
 
 const router = Router();
 
 router.get('/', validateToken, cardController.getAll);
 
-router.post('/', validateToken, cardController.create);
+router.post('/', validateToken, validateCardCreate, cardController.create);
 
 router.put('/:id', validateToken, validateCardUpdate, cardController.update);
 

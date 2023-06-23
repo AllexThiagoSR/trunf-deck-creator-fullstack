@@ -12,4 +12,6 @@ router.post('/', validateToken, validateCardCreate, cardController.create);
 
 router.put('/:id', validateToken, validateCardUpdate, cardController.update);
 
+router.delete('/:id', validateToken, cardController.deleteCard);
+
 module.exports = router;

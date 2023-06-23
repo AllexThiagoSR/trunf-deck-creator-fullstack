@@ -21,4 +21,9 @@ const create = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { getAll, update, create };
+const deleteCard = async (req, res) => {
+  const { status, data } = await cardService.deleteCard(req.params.id);
+  return res.status(status).json(data);
+};
+
+module.exports = { getAll, update, deleteCard, create };

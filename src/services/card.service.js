@@ -109,6 +109,7 @@ const deleteCard = async (id) => {
     const card = await Card.findByPk(id);
     if (!card) return { status: 404, data: { message: 'Card not found' } };
     await Card.destroy({ where: { id } });
+    return { status: 204 };
   } catch (error) {
     return INTERNAL_ERROR;
   }

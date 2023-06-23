@@ -52,7 +52,7 @@ module.exports = {
         description: 'Another card to test the API',
         image: 'Card Image',
         rarity_id: 3,
-        is_trunfo: true,
+        is_trunfo: false,
         attribute_one: 10,
         attribute_two: 10,
         attribute_three: 10,

@@ -25,10 +25,17 @@ const createCard = async (cardInfo) => {
 
 const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
 
+const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
+  await Card.findOne({ where: { deckId, isTrunfo: true } }),
+);
+
 const create = async (cardInfo) => {
   try {
-    if (await deckExists(cardInfo.deckId)) {
+    if (!(await deckExists(cardInfo.deckId))) {
       return { status: 404, data: { message: 'Deck not found' } };
+    }
+    if ((await hasTrunfo(cardInfo))) {
+      return { status: 409, data: { message: 'This deck already have a trunfo' } };
     }
     const card = await createCard(cardInfo);
     return { status: 201, data: card };

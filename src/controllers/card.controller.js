@@ -16,4 +16,9 @@ const update = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { getAll, update };
+const create = async (req, res) => {
+  const { status, data } = await cardService.create(req.body);
+  return res.status(status).json(data);
+};
+
+module.exports = { getAll, update, create };

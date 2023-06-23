@@ -7,6 +7,8 @@ const router = Router();
 
 router.get('/', validateToken, cardController.getAll);
 
+router.post('/', validateToken, cardController.create);
+
 router.put('/:id', validateToken, validateCardUpdate, cardController.update);
 
 module.exports = router;

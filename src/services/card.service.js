@@ -12,7 +12,6 @@ const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
 const attributesIsOk = ({ attributes }) => {
   const maxSum = 210;
   const attributesIsInRange = attributes.every((value) => (value >= 0 && value <= 90));
-  console.log(attributesIsInRange);
   const sumIsInRange = attributes.reduce((acc, currValue) => acc + currValue, 0) < maxSum;
   return attributesIsInRange && sumIsInRange;
 };

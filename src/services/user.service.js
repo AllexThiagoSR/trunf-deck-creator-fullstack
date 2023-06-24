@@ -17,6 +17,7 @@ const login = async (password, email = '') => {
     const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };
   } catch (error) {
+    console.log(error);
     return INTERNAL_SERVER_ERROR;
   }
 };

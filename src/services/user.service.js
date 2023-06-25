@@ -106,4 +106,14 @@ const updateUser = async ({ username, image, email }, loggedUser) => {
   }
 };
 
-module.exports = { login, create, getUserById, getAll, changePassword, updateUser };
+const deleteUser = async (id, user) => {
+  try {
+    if (user.id !== Number(id)) return { status: 401, data: { message: 'Unauthorized user' } };
+    await User.destroy({ where: { id } });
+    return { status: 204 };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+};
+
+module.exports = { login, create, getUserById, getAll, changePassword, updateUser, deleteUser };

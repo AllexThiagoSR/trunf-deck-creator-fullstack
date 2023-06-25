@@ -16,4 +16,6 @@ router.patch('/change/password', validateToken, userController.changePassword);
 
 router.put('/update', validateToken, validateUpdate, userController.updateUser);
 
+router.delete('/:id', validateToken, userController.deleteUser);
+
 module.exports = router;

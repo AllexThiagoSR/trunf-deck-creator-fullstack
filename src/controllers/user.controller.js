@@ -32,4 +32,9 @@ const updateUser = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { login, create, updateUser, getUserById, getAll, changePassword };
+const deleteUser = async (req, res) => {
+  const { status, data } = await userService.deleteUser(req.params.id, req.user);
+  return res.status(status).json(data);
+};
+
+module.exports = { login, create, deleteUser, updateUser, getUserById, getAll, changePassword };

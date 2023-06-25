@@ -1,8 +1,8 @@
 const { Op, QueryTypes } = require('sequelize');
-const { Card, Deck, sequelize } = require('../models');
+const { Card, Deck, sequelize, Rarity } = require('../models');
 
 const INTERNAL_ERROR = { status: 500, data: { message: 'Internal server error' } };
-
+const { URL_PROTOCOL, URL_BASE } = process.env;
 const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
 
 const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
@@ -73,9 +73,9 @@ const create = async (cardInfo) => {
 };
 
 const makePartition = (quantity = 15, page = 1) => ({
-  limit: quantity,
-  offset: (Number(page) - 1) * quantity,
-  nextPage: Number(page) + 1,
+  limit: parseInt(quantity, 10),
+  offset: (parseInt(page, 10) - 1) * parseInt(quantity, 10),
+  nextPage: parseInt(page, 10) + 1,
 });
 
 const makeFilters = (rarity, isTrunfo, q) => {
@@ -94,7 +94,9 @@ const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
       limit,
       offset,
     });
-    const next = (offset + limit) < count ? `http://localhost:3001/cards?page=${nextPage}` : null; 
+    const hasLimit = quantity ? `&limit=${quantity}` : '';
+    const next = (offset + limit) < count 
+      ? `${URL_PROTOCOL}${URL_BASE}/cards?page=${nextPage}${hasLimit}` : null; 
     return { status: 200, data: { cards, next } };
   } catch (error) {
     return INTERNAL_ERROR;
@@ -121,9 +123,29 @@ const update = async (id, user, { name, description, image, rarityId, attributes
   }
 };
 
+const getCard = async (id) => {
+  const card = await Card.findByPk(
+    id,
+    { 
+      include: [
+        { 
+          model: Deck, 
+          as: 'deck',
+          attributes: ['attributeOne', 'attributeTwo', 'attributeThree', 'name'], 
+        },
+        {
+          model: Rarity, as: 'rarity', attributes: ['name'],
+        },
+      ],
+      attributes: { exclude: ['deckId', 'rarityId'] },
+    },
+  );
+  return card;
+};
+
 const deleteCard = async (id) => {
   try {
-    const card = await Card.findByPk(id);
+    const card = await getCard(id);
     if (!card) return { status: 404, data: { message: 'Card not found' } };
     await Card.destroy({ where: { id } });
     return { status: 204 };
@@ -132,4 +154,14 @@ const deleteCard = async (id) => {
   }
 };
 
-module.exports = { create, getAll, deleteCard, update };
+const getById = async (id) => {
+  try {
+    const card = await getCard(id);
+    if (!card) return { status: 404, data: { message: 'Card not found' } };
+    return { status: 200, data: card };
+  } catch (error) {
+    return INTERNAL_ERROR;
+  }
+};
+
+module.exports = { create, getById, getAll, deleteCard, update };

@@ -8,6 +8,8 @@ const router = Router();
 
 router.get('/', validateToken, cardController.getAll);
 
+router.get('/:id', validateToken, cardController.getById);
+
 router.post('/', validateToken, validateCardCreate, cardController.create);
 
 router.put('/:id', validateToken, validateCardUpdate, cardController.update);

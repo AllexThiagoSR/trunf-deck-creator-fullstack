@@ -25,4 +25,10 @@ const update = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { create, getAll, update, getById };
+const getDeckByUserId = async (req, res) => {
+  const { userId } = req.params;
+  const { status, data } = await deckService.getDeckByUserId(userId);
+  return res.status(status).json(data);
+};
+
+module.exports = { create, getAll, update, getDeckByUserId, getById };

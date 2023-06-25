@@ -100,6 +100,14 @@ const deleteDeck = async (id, loggedUser) => {
   }
 };
 
-// const getDeckByUser = async (user) => {};
+const getDeckByUserId = async (userId) => {
+  try {
+    const decks = await Deck
+      .findAll({ where: { userId }, attributes: { exclude: ['userId', 'created', 'updated'] } });
+    return { status: 200, data: decks };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+};
 
-module.exports = { create, getAll, update, getById, deleteDeck };
+module.exports = { create, getAll, update, getById, getDeckByUserId, deleteDeck };

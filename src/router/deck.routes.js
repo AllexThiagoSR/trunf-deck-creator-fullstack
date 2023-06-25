@@ -10,6 +10,8 @@ router.post('/', validateToken, validateNewDeck, deckController.create);
 
 router.get('/', validateToken, deckController.getAll);
 
+router.get('/user/:userId', validateToken, deckController.getDeckByUserId);
+
 router.get('/:id', validateToken, deckController.getById);
 
 router.put('/:id', validateToken, validateDeckUpdate, deckController.update);

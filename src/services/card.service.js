@@ -3,6 +3,7 @@ const { Card, Deck, sequelize, Rarity } = require('../models');
 
 const INTERNAL_ERROR = { status: 500, data: { message: 'Internal server error' } };
 const { URL_PROTOCOL, URL_BASE } = process.env;
+
 const deckExists = async (deckId) => Boolean(await Deck.findByPk(deckId));
 
 const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(

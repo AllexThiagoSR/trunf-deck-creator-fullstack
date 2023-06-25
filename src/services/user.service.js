@@ -68,6 +68,7 @@ const getUserById = async (id) => {
 };
 
 const getAll = async (username = '') => {
+  // Adicionar paginação na rota de obter todos os usuários
   try {
     const users = await User.findAll({
       where: {

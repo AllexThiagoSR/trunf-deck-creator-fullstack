@@ -13,6 +13,7 @@ const create = async (deckInfo) => {
 };
 
 const getAll = async () => {
+  // Adicionar filtro e paginação na rota de obter todos os decks
   try {
     const decks = await Deck.findAll({
       include: [
@@ -76,5 +77,7 @@ const deleteDeck = async (id, loggedUser) => {
     return INTERNAL_SERVER_ERROR;
   }
 };
+
+// const getDeckByUser = async (user) => {};
 
 module.exports = { create, getAll, update, getById, deleteDeck };

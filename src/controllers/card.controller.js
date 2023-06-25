@@ -22,7 +22,7 @@ const create = async (req, res) => {
 };
 
 const deleteCard = async (req, res) => {
-  const { status, data } = await cardService.deleteCard(req.params.id);
+  const { status, data } = await cardService.deleteCard(req.params.id, req.user);
   return res.status(status).json(data);
 };
 

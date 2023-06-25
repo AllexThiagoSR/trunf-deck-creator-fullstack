@@ -132,7 +132,7 @@ const getCard = async (id) => {
         { 
           model: Deck, 
           as: 'deck',
-          attributes: ['attributeOne', 'attributeTwo', 'attributeThree', 'name'], 
+          attributes: ['attributeOne', 'attributeTwo', 'attributeThree', 'name', 'userId'], 
         },
         {
           model: Rarity, as: 'rarity', attributes: ['name'],
@@ -144,13 +144,18 @@ const getCard = async (id) => {
   return card;
 };
 
-const deleteCard = async (id) => {
+const deleteCard = async (id, user) => {
   try {
     const card = await getCard(id);
     if (!card) return { status: 404, data: { message: 'Card not found' } };
+    if (card.deck.userId !== user.id) {
+      return { status: 401, data: { message: 'Unauthorized user' } };
+    }
+    console.log(card.deck.userId !== user.id);
     await Card.destroy({ where: { id } });
     return { status: 204 };
   } catch (error) {
+    console.log(error);
     return INTERNAL_ERROR;
   }
 };

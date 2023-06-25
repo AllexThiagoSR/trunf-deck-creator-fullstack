@@ -1,6 +1,8 @@
+const { Op } = require('sequelize');
 const { Deck, User, Card, Rarity } = require('../models');
 
 const INTERNAL_SERVER_ERROR = { status: 500, data: { message: 'Internal server error' } };
+const { URL_PROTOCOL, URL_BASE } = process.env;
 
 const create = async (deckInfo) => {
   try {
@@ -12,18 +14,38 @@ const create = async (deckInfo) => {
   }
 };
 
-const getAll = async () => {
-  // Adicionar filtro e paginação na rota de obter todos os decks
-  try {
-    const decks = await Deck.findAll({
-      include: [
-        { model: User, as: 'user', attributes: { exclude: ['id', 'roleId', 'password', 'email'] } },
-      ],
-      attributes: {
-        exclude: ['userId'],
+const makePartition = (quantity = 15, page = 1) => ({
+  limit: parseInt(quantity, 10),
+  offset: (parseInt(page, 10) - 1) * parseInt(quantity, 10),
+  nextPage: parseInt(page, 10) + 1,
+});
+
+const getDecks = async (username, name, { limit, offset }) => {
+  const { count, rows: decks } = await Deck.findAndCountAll({
+    include: [
+      { 
+        model: User, 
+        as: 'user',
+        attributes: { exclude: ['id', 'roleId', 'password', 'email'] },
+        where: { username: { [Op.substring]: username } },
       },
-    });
-    return { status: 200, data: decks };
+    ],
+    attributes: { exclude: ['userId'] },
+    where: { name: { [Op.substring]: name } },
+    limit,
+    offset,
+  });
+  return { count, decks };
+};
+
+const getAll = async ({ quantity, page }, username = '', name = '') => {
+  try {
+    const { limit, offset, nextPage } = makePartition(quantity, page);
+    const { count, decks } = await getDecks(username, name, { limit, offset });
+    const hasLimit = quantity ? `&limit=${quantity}` : '';
+    const next = (offset + limit) < count 
+      ? `${URL_PROTOCOL}${URL_BASE}/decks?page=${nextPage}${hasLimit}` : null; 
+    return { status: 200, data: { decks, next } };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
   }

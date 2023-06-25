@@ -6,7 +6,19 @@ module.exports = {
       {
         name: 'test',
         user_id: 1,
-      }
+      },
+      {
+        name: 'test',
+        user_id: 2,
+      },
+      {
+        name: 'test',
+        user_id: 1,
+      },
+      {
+        name: 'test',
+        user_id: 2,
+      },
     ], {});
   },
 

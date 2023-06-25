@@ -6,8 +6,9 @@ const create = async (req, res) => {
   return res.status(status).json(data);
 };
 
-const getAll = async (_req, res) => {
-  const { status, data } = await deckService.getAll();
+const getAll = async (req, res) => {
+  const { username, name, limit, page } = req.query;
+  const { status, data } = await deckService.getAll({ quantity: limit, page }, username, name);
   return res.status(status).json(data);
 };
 

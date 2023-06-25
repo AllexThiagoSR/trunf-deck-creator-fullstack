@@ -14,7 +14,13 @@ module.exports = {
           email: 'allexthiagoDEV@gmail.com',
           password: encryptPassword(ADM_PASSWORD),
           role_id: 1
-        }
+        },
+        {
+          username: 'Jão',
+          email: 'jaodev@gmail.com',
+          password: encryptPassword('1234567'),
+          role_id: 2
+        },
       ],
       {},
     );

@@ -1,9 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const { userController } = require('./controllers');
 const { userRouter, deckRouter, cardRouter, rarityRouter } = require('./router');
 const validateLogin = require('./middlewares/validateLogin');
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 

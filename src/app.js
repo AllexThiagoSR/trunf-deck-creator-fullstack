@@ -1,6 +1,6 @@
 const express = require('express');
 const { userController } = require('./controllers');
-const { userRouter, deckRouter, cardRouter } = require('./router');
+const { userRouter, deckRouter, cardRouter, rarityRouter } = require('./router');
 const validateLogin = require('./middlewares/validateLogin');
 
 const app = express();
@@ -16,5 +16,7 @@ app.use('/users', userRouter);
 app.use('/decks', deckRouter);
 
 app.use('/cards', cardRouter);
+
+app.use('/rarities', rarityRouter);
 
 module.exports = app;

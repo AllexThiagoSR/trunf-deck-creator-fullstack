@@ -17,17 +17,16 @@ const login = async (password, email = '') => {
     const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };
   } catch (error) {
-    console.log(error);
     return INTERNAL_SERVER_ERROR;
   }
 };
 
 const createUser = async (user, transaction) => {
-  const { username, email, image, id, role } = await User.create(
+  const { username, email, image, id } = await User.create(
     { ...user, roleId: 2 },
     { transaction },
   );
-  return { id, email, image, username, role };
+  return { id, email, image, username };
 };
 
 const create = async ({ username, email, password, image }) => {
@@ -37,9 +36,7 @@ const create = async ({ username, email, password, image }) => {
         { username, email, password: encryptPassword(password), image },
         transaction,
       );
-      const userToReturn = { ...user };
-      delete userToReturn.password;
-      return { status: 201, data: userToReturn }; 
+      return { status: 201, data: user }; 
     });
     return result;
   } catch (error) {

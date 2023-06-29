@@ -12,7 +12,7 @@ const login = async (password, email = '') => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user || !isRightPassword(password, user.password)) {
-      return { status: 401, data: { message: 'Username, email or password incorrect' } };
+      return { status: 401, data: { message: 'email or password incorrect' } };
     }
     const token = createToken({ id: user.id, username: user.username, isAdm: user.roleId === 1 });
     return { status: 200, data: { token } };

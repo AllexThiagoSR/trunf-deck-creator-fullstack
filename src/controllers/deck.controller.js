@@ -14,7 +14,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   const { id } = req.params;
-  const { status, data } = await deckService.getById(id);
+  const { status, data } = await deckService.getById(id, req.user);
   return res.status(status).json(data);
 };
 

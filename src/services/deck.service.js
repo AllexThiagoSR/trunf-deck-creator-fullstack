@@ -51,11 +51,11 @@ const getAll = async ({ quantity, page }, username = '', name = '') => {
   }
 };
 
-const getById = async (id) => {
+const getById = async (id, user) => {
   try {
     const deck = await Deck.findByPk(id, {
       include: [
-        { model: User, as: 'user', attributes: { exclude: ['id', 'roleId', 'password', 'email'] } },
+        { model: User, as: 'user', attributes: { exclude: ['roleId', 'password', 'email'] } },
         {
           model: Card, 
           as: 'cards',
@@ -65,7 +65,9 @@ const getById = async (id) => {
       ],
       attributes: { exclude: ['userId'] },
     });
-    return { status: 200, data: deck };
+
+    if (!deck) return { status: 404, data: { message: 'Deck not found ' } };
+    return { status: 200, data: { deck, canEdit: user.id === deck.user.id } };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
   }

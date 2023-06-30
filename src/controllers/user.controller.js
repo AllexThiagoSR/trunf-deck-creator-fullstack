@@ -37,4 +37,18 @@ const deleteUser = async (req, res) => {
   return res.status(status).json(data);
 };
 
-module.exports = { login, create, deleteUser, updateUser, getUserById, getAll, changePassword };
+const getLoggedUser = async (req, res) => {
+  const { status, data } = await userService.getLoggedUser(req.user);
+  return res.status(status).json(data);
+};
+
+module.exports = { 
+  login, 
+  create,
+  deleteUser,
+  updateUser,
+  getUserById,
+  getAll,
+  changePassword,
+  getLoggedUser,
+};

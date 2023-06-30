@@ -10,6 +10,8 @@ router.post('/', validateNewUser, userController.create);
 
 router.get('/', validateToken, userController.getAll);
 
+router.get('/logged', validateToken, userController.getLoggedUser);
+
 router.get('/:id', validateToken, userController.getUserById);
 
 router.patch('/change/password', validateToken, userController.changePassword);

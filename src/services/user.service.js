@@ -52,12 +52,27 @@ const getUserById = async (id) => {
     const user = await User.findOne({ 
       where: { id },
       include: [
-        { model: Deck, as: 'decks', attributes: { exclude: ['userId'] } },
+        { model: Deck, as: 'decks', attributes: ['name', 'created', 'updated'] },
         { model: Role, as: 'role', attributes: { exclude: ['id'] } },
       ],
       attributes: { exclude: ['password', 'roleId'] },
     });
     if (!user) return { status: 404, data: { message: 'User not found' } };
+    return { status: 200, data: user };
+  } catch (error) {
+    return INTERNAL_SERVER_ERROR;
+  }
+};
+
+const getLoggedUser = async (loggedUser) => {
+  try {
+    const user = await User.findByPk(
+      loggedUser.id,
+      {
+        include: { model: Deck, as: 'decks', attributes: ['name', 'created', 'updated'] },
+        attributes: { exclude: ['password', 'roleId', 'id'] },
+      },
+    );
     return { status: 200, data: user };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
@@ -113,4 +128,13 @@ const deleteUser = async (id, user) => {
   }
 };
 
-module.exports = { login, create, getUserById, getAll, changePassword, updateUser, deleteUser };
+module.exports = {
+  login,
+  getLoggedUser,
+  create,
+  getUserById,
+  getAll,
+  changePassword,
+  updateUser,
+  deleteUser,
+};

@@ -1,0 +1,27 @@
+version: '3'
+services:
+  backend:
+    container_name: api
+    command: dev
+    build: .
+    volumes:
+      - .:/backend
+    working_dir: /backend
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - 3001:3001
+    tty: true
+    stdin_open: true
+    restart: always
+  db:
+    image: mysql:8.0.23
+    container_name: database
+    platform: linux/x86_64
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: batatinha123chips43

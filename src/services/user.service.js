@@ -86,7 +86,7 @@ const getAll = async (username = '') => {
       where: {
         username: { [Sequelize.Op.substring]: username },
       },
-      attributes: { exclude: ['password', 'roleId'] },
+      attributes: { exclude: ['password', 'roleId', 'email'] },
     });
     return { status: 200, data: users };
   } catch (error) {

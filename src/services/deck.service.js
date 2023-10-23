@@ -30,7 +30,7 @@ const getDecks = async (username, name, { limit, offset }) => {
         where: { username: { [Op.substring]: username } },
       },
     ],
-    attributes: { exclude: ['userId'] },
+    attributes: { exclude: ['userId', 'attributeOne', 'attributeTwo', 'attributeThree'] },
     where: { name: { [Op.substring]: name } },
     limit,
     offset,

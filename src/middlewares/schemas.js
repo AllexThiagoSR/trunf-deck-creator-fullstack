@@ -28,7 +28,7 @@ const updateDeckSchema = Joi.object({
 
 const createCardSchema = Joi.object({
   name: Joi.string().min(3).required(),
-  attributes: Joi.array().items(Joi.number()).min(3).max(3)
+  attributes: Joi.array().items(Joi.number()).length(3)
     .required(),
   description: Joi.string().min(7).required(),
   image: Joi.string(),

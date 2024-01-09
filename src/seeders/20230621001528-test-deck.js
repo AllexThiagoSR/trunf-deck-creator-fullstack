@@ -22,6 +22,9 @@ module.exports = {
       {
         name: 'The Office',
         user_id: 1,
+        attribute_one: 'Humor',
+        attribute_two: 'Beauty',
+        attribute_three: 'Craziness',
       },
     ], {});
   },

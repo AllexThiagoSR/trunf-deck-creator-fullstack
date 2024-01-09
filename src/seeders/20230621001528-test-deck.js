@@ -19,6 +19,10 @@ module.exports = {
         name: 'test',
         user_id: 2,
       },
+      {
+        name: 'The Office',
+        user_id: 1,
+      },
     ], {});
   },
 

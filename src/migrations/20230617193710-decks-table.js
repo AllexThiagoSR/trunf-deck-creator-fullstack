@@ -15,16 +15,19 @@ module.exports = {
       },
       attributeOne: {
         type: Sequelize.STRING,
+        allowNull: false,
         defaultValue: 'Attribute 1',
         field: 'attribute_one',
       },
       attributeTwo: {
         type: Sequelize.STRING,
+        allowNull: false,
         defaultValue: 'Attribute 2',
         field: 'attribute_two',
       },
       attributeThree: {
         type: Sequelize.STRING,
+        allowNull: false,
         defaultValue: 'Attribute 3',
         field: 'attribute_three',
       },

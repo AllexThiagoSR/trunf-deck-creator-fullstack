@@ -80,7 +80,7 @@ const makePartition = (quantity = 15, page = 1) => ({
 });
 
 const makeFilters = (rarity, isTrunfo, q) => {
-  const rare = rarity ? [rarity] : [1, 2, 3];
+  const rare = rarity ? [rarity] : [1, 2, 3, 4, 5];
   const trunfo = isTrunfo !== 'true' && isTrunfo !== 'false'
     ? {} : { isTrunfo: { [Op.is]: isTrunfo === 'true' } };
   return { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo };

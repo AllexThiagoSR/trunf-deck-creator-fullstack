@@ -86,6 +86,17 @@ const makeFilters = (rarity, isTrunfo, q) => {
   return { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo };
 };
 
+const include = [
+  { 
+    model: Deck, 
+    as: 'deck',
+    attributes: ['attributeOne', 'attributeTwo', 'attributeThree'], 
+  },
+  {
+    model: Rarity, as: 'rarity', attributes: ['name'],
+  },
+];
+      
 const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
   try {
     const { limit, offset, nextPage } = makePartition(quantity, page);
@@ -94,6 +105,8 @@ const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
       order: ['id'],
       limit,
       offset,
+      attributes: { exclude: ['deckId'] },
+      include,
     });
     const hasLimit = quantity ? `&limit=${quantity}` : '';
     const next = (offset + limit) < count 

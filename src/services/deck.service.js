@@ -7,7 +7,13 @@ const { URL_PROTOCOL, URL_BASE } = process.env;
 const create = async (deckInfo) => {
   try {
     const { id } = await Deck.create(deckInfo);
-    const deck = await Deck.findByPk(id);
+    const deck = await Deck.findByPk(id, {
+      include: {
+        model: User,
+        as: 'user',
+        attributes: { exclude: ['id', 'roleId', 'password', 'email'] },
+      }
+    });
     return { status: 201, data: deck };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;

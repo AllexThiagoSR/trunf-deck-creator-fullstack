@@ -13,7 +13,7 @@ module.exports = {
   target: 'node',
   externals: {
     'node-gyp': 'commonjs node-gyp',
-    'pg': 'commonjs pg',
+    pg: 'commonjs pg',
   },
   module: {
     rules: [

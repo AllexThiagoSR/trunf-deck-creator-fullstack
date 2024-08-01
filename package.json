@@ -37,5 +37,8 @@
   "bugs": {
     "url": "https://github.com/AllexThiagoSR/trunfo-backend/issues"
   },
-  "homepage": "https://github.com/AllexThiagoSR/trunfo-backend#readme"
+  "homepage": "https://github.com/AllexThiagoSR/trunfo-backend#readme",
+  "engines": {
+    "node": ">=16.17.1"
+  }
 }

@@ -1,10 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const { userController } = require('./controllers');
 const { userRouter, deckRouter, cardRouter, rarityRouter } = require('./router');
 const validateLogin = require('./middlewares/validateLogin');
 
 const app = express();
+
+app.use(helmet());
 
 app.use(cors());
 

@@ -7,8 +7,8 @@
     "helmet": "6.0.1",
     "joi": "17.6.0",
     "jsonwebtoken": "9.0.0",
-    "morgan": "1.10.0",
-    "mysql2": "2.1.0",
+    "pg": "^8.12.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "6.3.4"
   },
   "devDependencies": {
@@ -22,8 +22,8 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "predev": "npm run restore",
-    "prestart": "npm run restore",
+    "predeve": "npm run restore",
+    "prestarst": "npm run restore",
     "start": "node ./src/server.js",
     "dev": "nodemon ./src/server.js",
     "restore": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"

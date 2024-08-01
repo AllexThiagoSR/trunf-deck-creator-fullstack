@@ -13,11 +13,11 @@ const hasTrunfo = async ({ deckId, isTrunfo }) => isTrunfo && Boolean(
 const attributesIsOk = ({ attributes }) => {
   const maxSum = 210;
   const attributesIsInRange = attributes.every((value) => (value >= 0 && value <= 90));
-  const sumIsInRange = attributes.reduce((acc, currValue) => acc + currValue, 0) < maxSum;
+  const sumIsInRange = (attributes[0] + attributes[1] + attributes[2]) <= maxSum;
   return attributesIsInRange && sumIsInRange;
 };
 
-const maxQuantity = async ({ deckId }) => {
+const maxQuantity = async (deckId) => {
   const [{ quantity }] = await sequelize.query(
     'SELECT COUNT(*) as quantity FROM cards WHERE deck_id = ?',
     { type: QueryTypes.SELECT, replacements: [deckId] },
@@ -61,7 +61,7 @@ const create = async (cardInfo) => {
     if (!(await deckExists(cardInfo.deckId))) {
       return { status: 404, data: { message: 'Deck not found' } };
     }
-    if (await maxQuantity(cardInfo)) {
+    if (await maxQuantity(cardInfo.deckId)) {
       return { status: 409, data: { message: 'Max cards quantity reached' } };
     }
     const hasConflict = await hasDeckConflict(cardInfo);
@@ -80,12 +80,23 @@ const makePartition = (quantity = 15, page = 1) => ({
 });
 
 const makeFilters = (rarity, isTrunfo, q) => {
-  const rare = rarity ? [rarity] : [1, 2, 3];
+  const rare = rarity ? [rarity] : [1, 2, 3, 4, 5];
   const trunfo = isTrunfo !== 'true' && isTrunfo !== 'false'
     ? {} : { isTrunfo: { [Op.is]: isTrunfo === 'true' } };
   return { rarityId: { [Op.in]: rare }, name: { [Op.substring]: q }, ...trunfo };
 };
 
+const include = [
+  { 
+    model: Deck, 
+    as: 'deck',
+    attributes: ['attributeOne', 'attributeTwo', 'attributeThree'], 
+  },
+  {
+    model: Rarity, as: 'rarity', attributes: ['name'],
+  },
+];
+      
 const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
   try {
     const { limit, offset, nextPage } = makePartition(quantity, page);
@@ -94,6 +105,8 @@ const getAll = async (rarity, { quantity, page }, isTrunfo = '', q = '') => {
       order: ['id'],
       limit,
       offset,
+      attributes: { exclude: ['deckId'] },
+      include,
     });
     const hasLimit = quantity ? `&limit=${quantity}` : '';
     const next = (offset + limit) < count 
@@ -151,11 +164,9 @@ const deleteCard = async (id, user) => {
     if (card.deck.userId !== user.id) {
       return { status: 401, data: { message: 'Unauthorized user' } };
     }
-    console.log(card.deck.userId !== user.id);
     await Card.destroy({ where: { id } });
     return { status: 204 };
   } catch (error) {
-    console.log(error);
     return INTERNAL_ERROR;
   }
 };
@@ -164,7 +175,7 @@ const getById = async (id) => {
   try {
     const card = await getCard(id);
     if (!card) return { status: 404, data: { message: 'Card not found' } };
-    return { status: 200, data: card };
+    return { status: 200, data: { card } };
   } catch (error) {
     return INTERNAL_ERROR;
   }

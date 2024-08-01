@@ -52,7 +52,7 @@ const getUserById = async (id) => {
     const user = await User.findOne({ 
       where: { id },
       include: [
-        { model: Deck, as: 'decks', attributes: ['name', 'created', 'updated'] },
+        { model: Deck, as: 'decks', attributes: ['id', 'name', 'created', 'updated'] },
         { model: Role, as: 'role', attributes: { exclude: ['id'] } },
       ],
       attributes: { exclude: ['password', 'roleId'] },
@@ -69,7 +69,11 @@ const getLoggedUser = async (loggedUser) => {
     const user = await User.findByPk(
       loggedUser.id,
       {
-        include: { model: Deck, as: 'decks', attributes: ['name', 'created', 'updated', 'id'] },
+        include: {
+          model: Deck,
+          as: 'decks',
+          attributes: ['id', 'name', 'created', 'updated', 'id'],
+        },
         attributes: { exclude: ['password', 'roleId', 'id'] },
       },
     );
@@ -86,7 +90,7 @@ const getAll = async (username = '') => {
       where: {
         username: { [Sequelize.Op.substring]: username },
       },
-      attributes: { exclude: ['password', 'roleId'] },
+      attributes: { exclude: ['password', 'roleId', 'email'] },
     });
     return { status: 200, data: users };
   } catch (error) {

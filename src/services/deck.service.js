@@ -2,12 +2,17 @@ const { Op } = require('sequelize');
 const { Deck, User, Card, Rarity } = require('../models');
 
 const INTERNAL_SERVER_ERROR = { status: 500, data: { message: 'Internal server error' } };
-const { URL_PROTOCOL, URL_BASE } = process.env;
 
 const create = async (deckInfo) => {
   try {
     const { id } = await Deck.create(deckInfo);
-    const deck = await Deck.findByPk(id);
+    const deck = await Deck.findByPk(id, {
+      include: {
+        model: User,
+        as: 'user',
+        attributes: { exclude: ['id', 'roleId', 'password', 'email'] },
+      },
+    });
     return { status: 201, data: deck };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
@@ -17,11 +22,10 @@ const create = async (deckInfo) => {
 const makePartition = (quantity = 15, page = 1) => ({
   limit: parseInt(quantity, 10),
   offset: (parseInt(page, 10) - 1) * parseInt(quantity, 10),
-  nextPage: parseInt(page, 10) + 1,
 });
 
 const getDecks = async (username, name, { limit, offset }) => {
-  const { count, rows: decks } = await Deck.findAndCountAll({
+  const decks = await Deck.findAll({
     include: [
       { 
         model: User, 
@@ -30,22 +34,19 @@ const getDecks = async (username, name, { limit, offset }) => {
         where: { username: { [Op.substring]: username } },
       },
     ],
-    attributes: { exclude: ['userId'] },
+    attributes: { exclude: ['userId', 'attributeOne', 'attributeTwo', 'attributeThree'] },
     where: { name: { [Op.substring]: name } },
     limit,
     offset,
   });
-  return { count, decks };
+  return decks;
 };
 
 const getAll = async ({ quantity, page }, username = '', name = '') => {
   try {
-    const { limit, offset, nextPage } = makePartition(quantity, page);
-    const { count, decks } = await getDecks(username, name, { limit, offset });
-    const hasLimit = quantity ? `&limit=${quantity}` : '';
-    const next = (offset + limit) < count 
-      ? `${URL_PROTOCOL}${URL_BASE}/decks?page=${nextPage}${hasLimit}` : null; 
-    return { status: 200, data: { decks, next } };
+    const { limit, offset } = makePartition(quantity, page);
+    const data = await getDecks(username, name, { limit, offset });
+    return { status: 200, data };
   } catch (error) {
     return INTERNAL_SERVER_ERROR;
   }

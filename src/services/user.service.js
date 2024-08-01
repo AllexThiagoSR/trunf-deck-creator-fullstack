@@ -69,7 +69,11 @@ const getLoggedUser = async (loggedUser) => {
     const user = await User.findByPk(
       loggedUser.id,
       {
-        include: { model: Deck, as: 'decks', attributes: ['id', 'name', 'created', 'updated', 'id'] },
+        include: {
+          model: Deck,
+          as: 'decks',
+          attributes: ['id', 'name', 'created', 'updated', 'id'],
+        },
         attributes: { exclude: ['password', 'roleId', 'id'] },
       },
     );

@@ -24,7 +24,7 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "predev": "npm run restore",
+    "predeve": "npm run restore",
     "prestart": "npm run restore",
     "start": "node ./src/server.js",
     "dev": "nodemon ./src/server.js",

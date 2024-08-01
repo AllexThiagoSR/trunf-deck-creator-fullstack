@@ -11,7 +11,7 @@ const create = async (deckInfo) => {
         model: User,
         as: 'user',
         attributes: { exclude: ['id', 'roleId', 'password', 'email'] },
-      }
+      },
     });
     return { status: 201, data: deck };
   } catch (error) {
